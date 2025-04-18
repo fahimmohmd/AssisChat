@@ -12,21 +12,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install CocoaPods
-        run: |
-          sudo gem install cocoapods
-          pod repo update
-          pod install --project-directory=./AssisChat
-
+     
       - name: Install fastlane
         run: sudo gem install fastlane
 
       - name: Build unsigned IPA
         run: |
           fastlane gym \
-            --workspace AssisChat/AssisChat.xcworkspace \
-            --scheme AssisChat \
-            --configuration Release \
++           --project AssisChat/AssisChat.xcodeproj \
++           --scheme AssisChat \
++           --configuration Release \
             --export_method ad-hoc \
             --skip_codesigning true \
             --output_directory build \
