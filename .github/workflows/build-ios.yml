@@ -19,7 +19,7 @@ jobs:
       - name: Build unsigned IPA
         run: |
           fastlane gym \
-            --project AssisChat/AssisChat.xcodeproj \
+            --project AssisChat.xcodeproj \
             --scheme AssisChat \
             --configuration Release \
             --export_method ad-hoc \
