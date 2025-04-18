@@ -10,25 +10,33 @@ jobs:
     runs-on: macos-14
 
     steps:
+      # 1. Check out your code
       - uses: actions/checkout@v3
 
-     
-      - name: Install fastlane
-        run: sudo gem install fastlane
-
-      - name: Build unsigned IPA
+      # 2. Build an unsigned .app
+      - name: xcodebuild (unsigned)
         run: |
-          fastlane gym \
-            --project AssisChat.xcodeproj \
-            --scheme AssisChat \
-            --configuration Release \
-            --export_method ad-hoc \
-            --skip_codesigning true \
-            --output_directory build \
-            --output_name AssisChat.ipa
+          xcodebuild clean build \
+            -project AssisChat.xcodeproj \
+            -scheme AssisChat \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO
 
-      - name: Upload artifact
+      # 3. Package into a raw .ipa (Payload/*.app)
+      - name: Package IPA
+        run: |
+          mkdir Payload
+          cp -R build/Build/Products/Release-iphoneos/AssisChat.app Payload/
+          zip -r AssisChat.ipa Payload
+
+      # 4. Upload the .ipa for download
+      - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
           name: AssisChat.ipa
-          path: build/AssisChat.ipa
+          path: AssisChat.ipa
+
